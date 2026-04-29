@@ -4869,6 +4869,12 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Shawinigan (QC)",
+      "module": "shawinigan_ca",
+      "default_params": {},
+      "id": "shawinigan_ca"
+    },
+    {
       "title": "Spruce Grove, AB",
       "module": "ics",
       "default_params": {
