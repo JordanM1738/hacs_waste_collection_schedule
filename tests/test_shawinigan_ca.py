@@ -5,7 +5,7 @@ from custom_components.waste_collection_schedule.waste_collection_schedule.sourc
 )
 import os
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -49,6 +49,8 @@ class TestShawiniganMetadata:
         assert hasattr(shawinigan_ca, "LAYERS")
         assert 0 in shawinigan_ca.LAYERS  # Recyclage
         assert 1 in shawinigan_ca.LAYERS  # Ordures
+        assert 2 in shawinigan_ca.LAYERS  # Sapin de Noël
+        assert 3 in shawinigan_ca.LAYERS  # Collecte de feuilles
         assert 4 in shawinigan_ca.LAYERS  # Compost
 
 
@@ -85,6 +87,16 @@ class TestWasteTypeMapping:
         """Test Layer 1 is ordures with correct icon"""
         assert shawinigan_ca.LAYERS[1]["type"] == "ORDURES"
         assert shawinigan_ca.LAYERS[1]["icon"] == "mdi:trash-can"
+
+    def test_layer_2_sapin(self):
+        """Test Layer 2 is Sapin (Christmas tree) with correct icon"""
+        assert shawinigan_ca.LAYERS[2]["type"] == "SAPIN"
+        assert shawinigan_ca.LAYERS[2]["icon"] == "mdi:pine-tree"
+
+    def test_layer_3_feuilles(self):
+        """Test Layer 3 is Feuilles (leaf pickup) with correct icon"""
+        assert shawinigan_ca.LAYERS[3]["type"] == "FEUILLES"
+        assert shawinigan_ca.LAYERS[3]["icon"] == "mdi:leaf-maple"
 
     def test_layer_4_compost(self):
         """Test Layer 4 is compost with correct icon"""
@@ -740,3 +752,210 @@ class TestHolidayHandling:
             assert kw.get("out_fields") == "*", (
                 f"Layer {url} must use out_fields='*', got {kw.get('out_fields')!r}"
             )
+
+
+class TestSeasonalLayers:
+    """Tests for seasonal layers: SAPIN (layer 2) and FEUILLES (layer 3)."""
+
+    _MOCK_GEO = {"x": -8096727.38, "y": 5865698.33}
+    _PATCH_GEO = (
+        "custom_components.waste_collection_schedule"
+        ".waste_collection_schedule.source.shawinigan_ca.geocode"
+    )
+    _PATCH_QFL = (
+        "custom_components.waste_collection_schedule"
+        ".waste_collection_schedule.source.shawinigan_ca.query_feature_layer"
+    )
+
+    def _future_dates(self, n=3, offset=30):
+        """Return n comma-separated date strings starting offset days from today."""
+        start = date.today() + timedelta(days=offset)
+        return ",".join(str(start + timedelta(days=i)) for i in range(n))
+
+    def _make_side_effect(self, layer_id: int, schedule: str, holiday_field: str):
+        """Build a mock side-effect that returns data only for the given layer."""
+        def side_effect(url, **kwargs):
+            # Match exactly the layer we want to test
+            tail = url.rstrip("/").split("/")[-1]
+            if tail == str(layer_id):
+                return [{"SCHEDULE": schedule,
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": holiday_field}]
+            return []  # all other layers (including /6 holidays) return empty
+        return side_effect
+
+    def test_sapin_layer_returns_sapin_type(self):
+        """Layer 2 features must produce SAPIN collection entries."""
+        schedule = self._future_dates()
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect(
+                2, schedule, "IMPACTYARD")),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        types = {c.type for c in collections}
+        assert "SAPIN" in types, "Layer 2 must produce SAPIN entries"
+        assert len([c for c in collections if c.type == "SAPIN"]) == 3
+
+    def test_feuilles_layer_returns_feuilles_type(self):
+        """Layer 3 features must produce FEUILLES collection entries."""
+        schedule = self._future_dates(n=4, offset=60)
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect(
+                3, schedule, "IMPACTYARD")),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        types = {c.type for c in collections}
+        assert "FEUILLES" in types, "Layer 3 must produce FEUILLES entries"
+        assert len([c for c in collections if c.type == "FEUILLES"]) == 4
+
+    def test_sapin_icon_in_collections(self):
+        """SAPIN entries must carry the mdi:pine-tree icon."""
+        schedule = self._future_dates(n=2)
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect(
+                2, schedule, "IMPACTYARD")),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        for c in collections:
+            if c.type == "SAPIN":
+                assert c.icon == "mdi:pine-tree"
+
+    def test_feuilles_icon_in_collections(self):
+        """FEUILLES entries must carry the mdi:leaf-maple icon."""
+        schedule = self._future_dates(n=2, offset=60)
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect(
+                3, schedule, "IMPACTYARD")),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        for c in collections:
+            if c.type == "FEUILLES":
+                assert c.icon == "mdi:leaf-maple"
+
+    def test_sapin_absent_when_layer_returns_no_features(self):
+        """If layer 2 returns no features, no SAPIN entry must appear."""
+        sapin_schedule = self._future_dates()
+
+        def side_effect(url, **kwargs):
+            tail = url.rstrip("/").split("/")[-1]
+            if tail == "1":  # ORDURES: keep something so fetch() doesn't raise
+                return [{"SCHEDULE": sapin_schedule,
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": "IMPACTGARB"}]
+            return []  # layer 2 absent
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=side_effect),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        assert "SAPIN" not in {c.type for c in collections}
+
+    def test_feuilles_absent_when_layer_returns_no_features(self):
+        """If layer 3 returns no features, no FEUILLES entry must appear."""
+        sapin_schedule = self._future_dates()
+
+        def side_effect(url, **kwargs):
+            tail = url.rstrip("/").split("/")[-1]
+            if tail == "1":  # ORDURES: keep something so fetch() doesn't raise
+                return [{"SCHEDULE": sapin_schedule,
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": "IMPACTGARB"}]
+            return []  # layer 3 absent
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=side_effect),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        assert "FEUILLES" not in {c.type for c in collections}
+
+    def test_sapin_holiday_adjusted_via_impactyard(self):
+        """SAPIN must use IMPACTYARD to apply holiday date shifts."""
+        import unittest.mock as mock
+
+        # Use a fixed base date in the far future to avoid expiry
+        base = date.today() + timedelta(days=90)
+        base_ms = int(datetime(base.year, base.month,
+                      base.day).timestamp() * 1000)
+        schedule_str = str(base)  # Sapin on that day
+
+        def side_effect(url, **kwargs):
+            tail = url.rstrip("/").split("/")[-1]
+            if tail == "2":  # SAPIN
+                return [{"SCHEDULE": schedule_str,
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": "IMPACTYARD"}]
+            if tail == "6":  # Holidays: base day shifted forward
+                return [{"HOLIDAYDATE": base_ms,
+                         "IMPACTYARD": "OneDayFrwd",
+                         "IMPACTGARB": "None",
+                         "IMPACTRECY": "None"}]
+            return []
+
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=side_effect),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        sapin_dates = {c.date for c in collections if c.type == "SAPIN"}
+        assert base + \
+            timedelta(
+                days=1) in sapin_dates, "SAPIN must be shifted +1 day via IMPACTYARD"
+        assert base not in sapin_dates, "Original SAPIN date must be replaced by shifted date"
+
+    def test_feuilles_holiday_adjusted_via_impactyard(self):
+        """FEUILLES must use IMPACTYARD to apply holiday date shifts."""
+        import unittest.mock as mock
+
+        base = date.today() + timedelta(days=120)
+        base_ms = int(datetime(base.year, base.month,
+                      base.day).timestamp() * 1000)
+        schedule_str = str(base)
+
+        def side_effect(url, **kwargs):
+            tail = url.rstrip("/").split("/")[-1]
+            if tail == "3":  # FEUILLES
+                return [{"SCHEDULE": schedule_str,
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": "IMPACTYARD"}]
+            if tail == "6":  # Holidays: base day shifted back
+                return [{"HOLIDAYDATE": base_ms,
+                         "IMPACTYARD": "OneDayBack",
+                         "IMPACTGARB": "None",
+                         "IMPACTRECY": "None"}]
+            return []
+
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=side_effect),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        feuilles_dates = {c.date for c in collections if c.type == "FEUILLES"}
+        assert base - \
+            timedelta(
+                days=1) in feuilles_dates, "FEUILLES must be shifted -1 day via IMPACTYARD"
+        assert base not in feuilles_dates, "Original FEUILLES date must be replaced by shifted date"

@@ -43,6 +43,9 @@ PARAM_TRANSLATIONS = {
 LAYERS = {
     0: {"type": "RECYCLAGE", "icon": "mdi:recycle"},     # Blue Bin Pickup
     1: {"type": "ORDURES", "icon": "mdi:trash-can"},     # Grey Bin Pickup
+    # Christmas Tree Collection
+    2: {"type": "SAPIN", "icon": "mdi:pine-tree"},
+    3: {"type": "FEUILLES", "icon": "mdi:leaf-maple"},   # Leaf Pickup
     4: {"type": "COMPOST", "icon": "mdi:leaf"},          # Green Bin Pickup
 }
 
