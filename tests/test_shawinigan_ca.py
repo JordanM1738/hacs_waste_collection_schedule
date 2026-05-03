@@ -959,3 +959,64 @@ class TestSeasonalLayers:
             timedelta(
                 days=1) in feuilles_dates, "FEUILLES must be shifted -1 day via IMPACTYARD"
         assert base not in feuilles_dates, "Original FEUILLES date must be replaced by shifted date"
+
+    def _make_side_effect_with_descript(self, layer_id: int, schedule: str,
+                                        holiday_field: str, descript: str):
+        """Like _make_side_effect but includes DESCRIPT field."""
+        def side_effect(url, **kwargs):
+            tail = url.rstrip("/").split("/")[-1]
+            if tail == str(layer_id):
+                return [{"SCHEDULE": schedule,
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": holiday_field,
+                         "DESCRIPT": descript}]
+            return []
+        return side_effect
+
+    def test_sapin_descript_propagated_to_collection_description(self):
+        """DESCRIPT from layer 2 must appear as Collection.description."""
+        schedule = self._future_dates(n=2)
+        descript = "Inscription obligatoire avant le 9 janvier : https://www.shawinigan.ca/sapin"
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect_with_descript(
+                2, schedule, "IMPACTYARD", descript)),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        for c in collections:
+            if c.type == "SAPIN":
+                assert c.description == descript, "SAPIN must carry DESCRIPT as description"
+
+    def test_feuilles_descript_propagated_to_collection_description(self):
+        """DESCRIPT from layer 3 must appear as Collection.description."""
+        schedule = self._future_dates(n=2, offset=60)
+        descript = "Automne 2026 : inscription obligatoire!"
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect_with_descript(
+                3, schedule, "IMPACTYARD", descript)),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        for c in collections:
+            if c.type == "FEUILLES":
+                assert c.description == descript, "FEUILLES must carry DESCRIPT as description"
+
+    def test_ordures_without_descript_has_no_description(self):
+        """Layer 1 (ORDURES) without DESCRIPT must produce entries with no description."""
+        schedule = self._future_dates(n=2)
+        with (
+            patch(self._PATCH_GEO, return_value=self._MOCK_GEO),
+            patch(self._PATCH_QFL, side_effect=self._make_side_effect(
+                1, schedule, "IMPACTGARB")),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        for c in collections:
+            if c.type == "ORDURES":
+                assert c.description is None, "ORDURES without DESCRIPT must have no description"

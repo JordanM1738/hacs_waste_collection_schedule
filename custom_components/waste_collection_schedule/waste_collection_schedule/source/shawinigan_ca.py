@@ -117,6 +117,7 @@ class Source:
             day_name = attrs.get("NAME", "")
             holiday_field = attrs.get("HOLIDAYFIELD") or "IMPACTGARB"
             layer_holidays = all_holidays.get(holiday_field, {})
+            description = attrs.get("DESCRIPT") or None
 
             collection_dates = _parse_schedule(
                 schedule_str, schedule_type, day_name,
@@ -126,7 +127,8 @@ class Source:
                 d = layer_holidays.get(d, d)
                 entries.append(
                     Collection(
-                        date=d, t=layer_info["type"], icon=layer_info["icon"])
+                        date=d, t=layer_info["type"], icon=layer_info["icon"],
+                        description=description)
                 )
 
         if not entries:
