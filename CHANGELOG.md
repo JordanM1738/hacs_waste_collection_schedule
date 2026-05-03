@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 
 Releases are listed in reverse chronological order.
 
+## [2.22.0] - 2026-05-02
+
+### Added Sources
+
+- added South Ayrshire Council, UK (#6212)
+- added Rueil-Malmaison, FR (#6213)
+- added SICTOM Lons-le-Saunier, FR (#6203)
+- added Sutherland Shire Council, NSW, AU (#6202)
+- added Strathfield Council, NSW, AU (thanks @emak) (#6199)
+- added Ekonovus, LT (thanks @sanis) (#6196)
+- added MRC Joliette, QC, CA (thanks @lit-af)
+- added Baton Rouge, LA, US (thanks @KlfJoat) (#6177)
+- added Hackney, London, UK (thanks @jimmym101) (#6152)
+- added Maitland City Council, NSW, AU (thanks @muxlowd) (#6153)
+- added Parramatta, NSW, AU (thanks @PiexlPuck) (#6168)
+- added Laval, QC, CA (thanks @lit-af) (#6175)
+
+### Fixed Sources
+
+- fixed ICS: strip TZID from VALUE=DATE properties to prevent naive/aware datetime comparison error (#6207)
+- fixed umweltverbaende_at: URL base extraction, Horn ort lookup, Schwechat migration (#6205)
+- fixed awido_de: update stale Daaden-Herdorf test case and fix ad-as-list handling (#6204)
+- fixed grafikai_svara_lt: rewrite for TanStack server-fn API (thanks @sanis) (#6198)
+- fixed elmbridge_gov_uk: handle rows_data as list when API returns no results - Fixes #6187 (#6195)
+- fixed fareham_gov_uk: work around malformed JSON from API - Fixes #6186 (#6194)
+- fixed a_region_ch: add retry-with-backoff for 429 responses - Fixes #6182 (#6192)
+- fixed irenambiente_it: align fortnightly schedules to ISO week numbers - Fixes #6173 (#6191)
+- fixed srvatervinning_se: raise SourceArgumentNotFound when address returns no results - Fixes #4960 (#6190)
+- fixed kirklees_gov_uk: rewrite for new my.kirklees.gov.uk API (thanks @elyobelyob) (#6167)
+- fixed richmond_gov_uk: address matching fix (thanks @jimmym101) (#6165)
+- fixed avfallsapp_se: accept localities within Varberg/Falkenberg municipalities (thanks @nnajko) (#6170)
+- fixed mid_sussex_district_council: URL change (thanks @nickmit-1957)
+- fixed enfield_gov_uk: address matching (thanks @armaneshaghi) (#6149)
+- fixed vafab_miljo: handle missing bin type info (thanks @gjohansson-ST) (#6164)
+
+### Documentation
+
+- added Le Havre Seine Métropole to publidata_fr (#6214)
+- added City of Beaumont AB and Bassetlaw District Council to ReCollect (#6211)
+- added Karben to mein_abfallkalender_online (#6210)
+- added Circular Materials Ontario municipalities to Recycle Coach (#6209)
+
 ## [2.21.0] - 2026-04-26
 
 ### New Services

@@ -16,6 +16,10 @@ Waste collection schedules in the following formats and countries are supported.
 
 If your service provider is not listed, feel free to open a [source request issue](https://github.com/mampfes/hacs_waste_collection_schedule/issues/new?assignees=&labels=source+request&projects=&template=SOURCE-REQUEST.yml&title=%5BSource+Request%5D%3A+) (please first check the [Issues section](https://github.com/mampfes/hacs_waste_collection_schedule/issues) if there already is an open issue for your service provider.).
 
+Source requests are always welcome. At the moment, however, only a small number of contributors are actively implementing new requests, while the available maintainers are mainly busy reviewing pull requests and fixing critical issues.
+
+If you already have enough information for your municipality/region, you are very welcome to implement the source and open a pull request yourself. A step-by-step guide is available in [How to contribute](/doc/contributing.md). Community help with implementation, testing, documentation, and reviews is greatly appreciated.
+
 <details>
 <summary>ICS/iCal and User-Specified</summary>
 
@@ -91,6 +95,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [City of Norwood Payneham and St Peters](/doc/source/app_my_local_services_au.md) / npsp.sa.gov.au
 - [City of Onkaparinga](/doc/source/app_my_local_services_au.md) / onkaparingacity.com
 - [City of Onkaparinga Council](/doc/source/onkaparingacity_com.md) / onkaparingacity.com
+- [City of Parramatta](/doc/source/cityofparramatta_nsw_gov_au.md) / cityofparramatta.nsw.gov.au
 - [City of Port Adelaide Enfield](/doc/source/app_my_local_services_au.md) / cityofpae.sa.gov.au
 - [City of Prospect](/doc/source/app_my_local_services_au.md) / prospect.sa.gov.au
 - [City of Rockingham](/doc/source/rockingham_wa_gov_au.md) / rockingham.wa.gov.au/your-services/waste-and-recycling/bin-collection
@@ -157,6 +162,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Livingstone Shire Council](/doc/source/impactapps_com_au.md) / livingstone.qld.gov.au
 - [Logan City Council](/doc/source/logan_qld_gov_au.md) / logan.qld.gov.au
 - [Macedon Ranges Shire Council](/doc/source/mrsc_vic_gov_au.md) / mrsc.vic.gov.au
+- [Maitland City Council](/doc/source/maitland_nsw_gov_au.md) / maitland.nsw.gov.au
 - [Mansfield Shire Council](/doc/source/mansfield_vic_gov_au.md) / mansfield.vic.gov.au
 - [Maribyrnong Council](/doc/source/maribyrnong_vic_gov_au.md) / maribyrnong.vic.gov.au/Residents/Bins-and-recycling
 - [Maroondah City Council](/doc/source/maroondah_vic_gov_au.md) / maroondah.vic.gov.au
@@ -205,7 +211,9 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Southern Mallee District Council](/doc/source/app_my_local_services_au.md) / southernmallee.sa.gov.au
 - [Stirling](/doc/source/stirling_wa_gov_au.md) / stirling.wa.gov.au
 - [Stonnington City Council](/doc/source/stonnington_vic_gov_au.md) / stonnington.vic.gov.au
+- [Strathfield Council](/doc/source/strathfield_nsw_gov_au.md) / strathfield.nsw.gov.au
 - [Sunshine Coast Queensland (QLD)](/doc/source/sunshinecoast_qld_gov_au.md) / sunshinecoast.qld.gov.au/living-and-community/waste-and-recycling/bin-collection-days
+- [Sutherland Shire Council](/doc/source/sutherlandshire_nsw_gov_au.md) / sutherlandshire.nsw.gov.au
 - [The Flinders Ranges Council](/doc/source/app_my_local_services_au.md) / frc.sa.gov.au/page.aspx
 - [The Hawkesbury City Council, Sydney](/doc/source/hawkesbury_nsw_gov_au.md) / hawkesbury.nsw.gov.au
 - [The Hills Shire Council, Sydney](/doc/source/thehills_nsw_gov_au.md) / thehills.nsw.gov.au
@@ -235,7 +243,6 @@ If your service provider is not listed, feel free to open a [source request issu
 
 - [Abfallverband Hollabrunn](/doc/source/umweltverbaende_at.md) / hollabrunn.umweltverbaende.at
 - [Abfallverband Korneuburg](/doc/source/umweltverbaende_at.md) / korneuburg.umweltverbaende.at
-- [Abfallverband Schwechat](/doc/source/umweltverbaende_at.md) / schwechat.umweltverbaende.at
 - [Abfallwirtschaft der Stadt St. Pölten](/doc/ics/st-poelten_at.md) / st-poelten.at/sonstiges/17653-abfallkalender
 - [Abfallwirtschaft Wiener Neustadt](/doc/source/abfall_wiener_neustadt_at.md) / abfall.wiener-neustadt.at
 - [Absdorf](/doc/source/citiesapps_com.md) / absdorf.gv.at
@@ -757,13 +764,17 @@ If your service provider is not listed, feel free to open a [source request issu
 <summary>Canada</summary>
 
 - [Aurora (ON)](/doc/source/recyclecoach_com.md) / aurora.ca
+- [Brampton (ON)](/doc/source/recyclecoach_com.md) / brampton.ca
 - [Brantford (ON)](/doc/source/recyclecoach_com.md) / brantford.ca
+- [Burlington (ON)](/doc/source/recyclecoach_com.md) / burlington.ca
 - [Burnaby (BC)](/doc/source/recyclecoach_com.md) / burnaby.ca
+- [Caledon (ON)](/doc/source/recyclecoach_com.md) / caledon.ca
 - [Calgary (AB)](/doc/source/calgary_ca.md) / calgary.ca
 - [Calgary, AB](/doc/ics/recollect.md) / calgary.ca
 - [Castlegar, BC](/doc/ics/recollect.md) / castlegar.ca
 - [Chatham-Kent (ON)](/doc/source/recyclecoach_com.md) / chatham-kent.ca
 - [City of Barrie](/doc/source/barrie_ca.md) / barrie.ca/services-payments/garbage-recycling-organics/curbside-collection/collection-schedules
+- [City of Beaumont, AB](/doc/ics/recollect.md) / beaumont.ab.ca
 - [City of Edmonton, AB](/doc/ics/recollect.md) / edmonton.ca
 - [City of Greater Sudbury, ON](/doc/ics/recollect.md) / greatersudbury.ca
 - [City of Guelph, ON](/doc/ics/recollect.md) / guelph.ca
@@ -787,23 +798,30 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Gatineau, QC](/doc/ics/recollect.md) / gatineau.ca
 - [Georgina (ON)](/doc/ics/georgina_ca.md) / georgina.ca
 - [Grey Highlands, ON](/doc/ics/recollect.md) / greyhighlands.ca
+- [Guelph (ON)](/doc/source/recyclecoach_com.md) / guelph.ca
 - [Halifax, NS](/doc/ics/recollect.md) / halifax.ca
+- [Halton Hills (ON)](/doc/source/recyclecoach_com.md) / haltonhills.ca
 - [Halton Region, ON](/doc/ics/recollect.md) / halton.ca
 - [Kawartha Lakes (ON)](/doc/source/recyclecoach_com.md) / kawarthalakes.ca
 - [Kelowna (BC)](/doc/source/recyclecoach_com.md) / rdco.com
 - [LaSalle (ON)](/doc/source/recyclecoach_com.md) / lasalle.ca
+- [Laval (QC)](/doc/ics/laval_ca.md) / laval.ca
 - [London (ON)](/doc/source/recyclecoach_com.md) / london.ca
 - [Longueuil (QC)](/doc/ics/longueuil_quebec.md) / longueuil.quebec
 - [Lévis / Québec](/doc/ics/ville_levis_qc_ca.md) / ville.levis.qc.ca
 - [Markham, ON](/doc/ics/recollect.md) / markham.ca
 - [Medicine Hat (AB)](/doc/source/recyclecoach_com.md) / medicinehat.ca
+- [Milton (ON)](/doc/source/recyclecoach_com.md) / milton.ca
+- [Mississauga (ON)](/doc/source/recyclecoach_com.md) / mississauga.ca
 - [Montreal (QC)](/doc/source/montreal_ca.md) / montreal.ca/info-collectes
 - [MRC de Roussillon (QC)](/doc/source/info_collectes_ca.md) / info-collectes.ca
+- [MRC Joliette (QC)](/doc/source/mrcjoliette_qc_ca.md) / mrcjoliette.qc.ca
 - [MRC Marguerite-D'Youville](/doc/source/publidata_ca.md) / margueritedyouville.ca
 - [Muskoka District (Huntsville, ON)](/doc/ics/recollect.md) / muskoka.on.ca
 - [Niagara Region](/doc/ics/recollect.md) / niagararegion.ca
 - [Norfolk County (ON)](/doc/source/recyclecoach_com.md) / norfolkcounty.ca
 - [Oak Bay (BC)](/doc/source/recyclecoach_com.md) / oakbay.ca
+- [Oakville (ON)](/doc/source/recyclecoach_com.md) / oakville.ca
 - [Orillia (ON)](/doc/source/recyclecoach_com.md) / orillia.ca
 - [Ottawa, Canada](/doc/ics/recollect.md) / ottawa.ca
 - [Peel Region, ON](/doc/ics/recollect.md) / peelregion.ca
@@ -823,6 +841,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [St Clair Township, ON](/doc/ics/recollect.md) / stclairtownship.ca
 - [Strathcona County, ON](/doc/ics/recollect.md) / strathcona.ca
 - [Toronto (ON)](/doc/source/toronto_ca.md) / toronto.ca
+- [Toronto (ON) - Circular Materials](/doc/source/recyclecoach_com.md) / toronto.ca
 - [Township of Langley (BC)](/doc/source/recyclecoach_com.md) / tol.ca
 - [Valleyfield, Québec](/doc/ics/valleyfiled_qc_ca.md) / ville.valleyfield.qc.ca
 - [Vaughan (ON)](/doc/source/recyclecoach_com.md) / vaughan.ca
@@ -899,6 +918,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Grand Paris Seine Ouest](/doc/source/publidata_fr.md) / dechets.seineouest.fr
 - [Le Bouscat](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Le Haillan](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
+- [Le Havre Seine Métropole](/doc/source/publidata_fr.md) / tripratik.lehavreseinemetropole.fr
 - [Le Taillan-Médoc](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Mairie de Mamirolle](/doc/source/mamirolle_info.md) / mamirolle.info
 - [Martignas-sur-Jalle](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
@@ -910,12 +930,14 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Parempuyre](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Pessac](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Publidata generic source](/doc/source/publidata_fr.md) / publidata.io/fr
+- [Rueil-Malmaison](/doc/source/rueil_malmaison_fr.md) / rueil-malmaison.fr
 - [Saint Quentin en Yvelines](/doc/source/publidata_fr.md) / saint-quentin-en-yvelines.fr
 - [Saint-Aubin-de-Médoc](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Saint-Louis-de-Montferrand](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Saint-Médard-en-Jalles](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Saint-Vincent-de-Paul](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
 - [Saumur Val de Loire](/doc/source/publidata_fr.md) / saumurvaldeloire.fr
+- [SICTOM de Lons-le-Saunier](/doc/source/sictom_lons_le_saunier_fr.md) / sictom-lons-le-saunier.fr
 - [SIVOM Rive Droite](/doc/source/publidata_fr.md) / sivom-rivedroite.fr
 - [Sivom Rive Droite - Bassens](/doc/source/sivom_rivedroite_fr.md) / sivom-rivedroite.fr
 - [Talence](/doc/source/opendata_bordeauxmetropole_fr.md) / opendata.bordeaux-metropole.fr
@@ -1256,6 +1278,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Jumomind](/doc/source/jumomind_de.md) / jumomind.de
 - [KAEV Niederlausitz](/doc/source/kaev_niederlausitz.md) / kaev.de
 - [Kamp-Lintfort (MyMuell App)](/doc/source/jumomind_de.md) / mymuell.de
+- [Karben](/doc/ics/mein_abfallkalender_online.md) / karben.de
 - [KECL Kommunalentsorgung Chemnitzer Land](/doc/ics/kecl_de.md) / kecl.de
 - [Kierspe](/doc/source/lobbe_app.md) / lobbe.app
 - [Kirchdorf (MyMuell App)](/doc/source/jumomind_de.md) / mymuell.de
@@ -2097,6 +2120,7 @@ If your service provider is not listed, feel free to open a [source request issu
 <summary>Lithuania</summary>
 
 - [Ecoservice atliekos](/doc/source/ecoapp_ecoservice_lt.md) / ecoservice.lt
+- [Ekonovus](/doc/source/ekonovus_lt.md) / ekonovus.lt
 - [Kauno švara](/doc/source/grafikai_svara_lt.md) / grafikai.svara.lt
 - [Telšių keliai](/doc/source/tkeliai_lt.md) / tkeliai.lt
 </details>
@@ -2551,6 +2575,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Barnsley Metropolitan Borough Council](/doc/source/barnsley_gov_uk.md) / barnsley.gov.uk
 - [Basildon Council](/doc/source/basildon_gov_uk.md) / basildon.gov.uk
 - [Basingstoke and Deane Borough Council](/doc/source/basingstoke_gov_uk.md) / basingstoke.gov.uk
+- [Bassetlaw District Council](/doc/ics/recollect.md) / bassetlaw.gov.uk
 - [Bath & North East Somerset Council](/doc/source/bathnes_gov_uk.md) / bathnes.gov.uk
 - [BCP Council](/doc/source/bcp_gov_uk.md) / bcpportal.bcpcouncil.gov.uk
 - [Bedford Borough Council](/doc/source/bedford_gov_uk.md) / bedford.gov.uk
@@ -2685,6 +2710,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [London Borough of Bexley](/doc/source/bexley_gov_uk.md) / bexley.gov.uk
 - [London Borough of Bromley](/doc/source/bromley_gov_uk.md) / bromley.gov.uk
 - [London Borough of Camden](/doc/source/camden_gov_uk.md) / camden.gov.uk
+- [London Borough of Hackney](/doc/source/hackney_gov_uk.md) / hackney.gov.uk
 - [London Borough of Harrow](/doc/source/harrow_gov_uk.md) / harrow.gov.uk
 - [London Borough of Havering](/doc/source/havering_gov_uk.md) / havering.gov.uk
 - [London Borough of Hounslow](/doc/source/hounslow_gov_uk.md) / hounslow.gov.uk
@@ -2774,6 +2800,7 @@ If your service provider is not listed, feel free to open a [source request issu
 - [Somerset Council](/doc/source/iapp_itouchvision_com.md) / somerset.gov.uk
 - [Somerset County Council](/doc/source/iapp_itouchvision_com.md) / somerset.gov.uk
 - [Somerset West & Taunton District Council](/doc/source/iapp_itouchvision_com.md) / somersetwestandtaunton.gov.uk
+- [South Ayrshire Council](/doc/source/south_ayrshire_gov_uk.md) / south-ayrshire.gov.uk
 - [South Cambridgeshire District Council](/doc/source/greater_cambridge_waste_org.md) / scambs.gov.uk
 - [South Cambridgeshire District Council (Deprecated)](/doc/source/scambs_gov_uk.md) / scambs.gov.uk
 - [South Derbyshire District Council](/doc/source/southderbyshire_gov_uk.md) / southderbyshire.gov.uk
@@ -2860,6 +2887,7 @@ If your service provider is not listed, feel free to open a [source request issu
 <summary>United States of America</summary>
 
 - [Albuquerque, New Mexico, USA](/doc/source/recyclecoach_com.md) / recyclecoach.com/cities/usa-nm-city-of-albuquerque
+- [Baton Rouge, LA](/doc/source/baton_rouge_la_us.md) / brla.gov/337/Garbage-Collection
 - [City of Austin, TX](/doc/ics/recollect.md) / austintexas.gov
 - [City of Bloomington](/doc/ics/recollect.md) / bloomington.in.gov
 - [City of Cambridge](/doc/ics/recollect.md) / cambridgema.gov

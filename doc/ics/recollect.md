@@ -51,6 +51,8 @@ known to work with:
 |Rogue Disposal & Recycling (Medford, OR)|USA|[roguedisposal.com](https://roguedisposal.com/resources/recycling-schedule)|
 |Grey Highlands, ON|Canada|[greyhighlands.ca](https://www.greyhighlands.ca/my-home/waste-recycling/collection-schedule/)|
 |Spruce Grove, AB|Canada|[sprucegrove.org](https://www.sprucegrove.org/services/garbage-organics-recycling/sort-with-success/)|
+|City of Beaumont, AB|Canada|[beaumont.ab.ca](https://www.beaumont.ab.ca/1159/Waste-and-Recycling)|
+|Bassetlaw District Council|UK|[bassetlaw.gov.uk](https://www.bassetlaw.gov.uk/bins-recycling-and-waste/bins-for-recycling-and-waste/bin-collection-days/)|
 
 and probably a lot more.
 

@@ -158,6 +158,7 @@ This source has been successfully tested with the following service providers:
 
 - [Calgary, AB](/doc/ics/recollect.md) / calgary.ca
 - [Castlegar, BC](/doc/ics/recollect.md) / castlegar.ca
+- [City of Beaumont, AB](/doc/ics/recollect.md) / beaumont.ab.ca
 - [City of Edmonton, AB](/doc/ics/recollect.md) / edmonton.ca
 - [City of Greater Sudbury, ON](/doc/ics/recollect.md) / greatersudbury.ca
 - [City of Guelph, ON](/doc/ics/recollect.md) / guelph.ca
@@ -180,6 +181,7 @@ This source has been successfully tested with the following service providers:
 - [Grey Highlands, ON](/doc/ics/recollect.md) / greyhighlands.ca
 - [Halifax, NS](/doc/ics/recollect.md) / halifax.ca
 - [Halton Region, ON](/doc/ics/recollect.md) / halton.ca
+- [Laval (QC)](/doc/ics/laval_ca.md) / laval.ca
 - [Longueuil (QC)](/doc/ics/longueuil_quebec.md) / longueuil.quebec
 - [Lévis / Québec](/doc/ics/ville_levis_qc_ca.md) / ville.levis.qc.ca
 - [Markham, ON](/doc/ics/recollect.md) / markham.ca
@@ -300,6 +302,7 @@ This source has been successfully tested with the following service providers:
 - [Heusenstamm](/doc/ics/mein_abfallkalender_online.md) / heusenstamm.de
 - [Hochheim](/doc/ics/mein_abfallkalender_online.md) / hochheim.de
 - [Hofheim](/doc/ics/mein_abfallkalender_online.md) / hofheim.de
+- [Karben](/doc/ics/mein_abfallkalender_online.md) / karben.de
 - [KECL Kommunalentsorgung Chemnitzer Land](/doc/ics/kecl_de.md) / kecl.de
 - [Kirchhain](/doc/ics/abfall_export_vcal.md) / kirchhain.de
 - [Knittel Entsorgung](/doc/ics/knittel_entsorgung_com.md) / knittel-entsorgung.com
@@ -432,6 +435,7 @@ This source has been successfully tested with the following service providers:
 ### United Kingdom
 
 - [Anglesey](/doc/ics/anglesey_gov_wales.md) / anglesey.gov.wales
+- [Bassetlaw District Council](/doc/ics/recollect.md) / bassetlaw.gov.uk
 - [Brent Council](/doc/ics/brent_gov_uk.md) / brent.gov.uk
 - [Caerphilly, Wales](/doc/ics/recollect.md) / caerphilly.gov.uk
 - [Falkirk](/doc/ics/falkirk_gov_uk.md) / falkirk.gov.uk
