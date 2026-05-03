@@ -78,7 +78,7 @@ class Source:
                 features = query_feature_layer(
                     f"{MAPSERVER_BASE}/{layer_id}",
                     geometry=location,
-                    out_fields="DISTRICTID,SCHEDULE,SCHEDULETYPE,NAME,HOLIDAYFIELD",
+                    out_fields="*",
                 )
                 if features:
                     raw_layers[layer_id] = features[0]
@@ -240,14 +240,16 @@ def _get_holidays_by_field() -> dict[str, dict[date, date]]:
         features = query_feature_layer(
             f"{MAPSERVER_BASE}/{HOLIDAYS_LAYER}",
             where="1=1",
-            out_fields="HOLIDAYDATE,IMPACTRECY,IMPACTGARB,IMPACTCOMP",
+            out_fields="*",
         )
         for attrs in features:          # attrs is already the attributes dict
             holiday_ms = attrs.get("HOLIDAYDATE")
             if not holiday_ms:
                 continue
             holiday_date = epoch_ms_to_date(holiday_ms)
-            for field in ("IMPACTRECY", "IMPACTGARB", "IMPACTCOMP"):
+            # Iterate over all IMPACT* fields dynamically — robust against new collection types
+            impact_fields = [k for k in attrs if k.startswith("IMPACT")]
+            for field in impact_fields:
                 val = (attrs.get(field) or "").lower()
                 if "frwd" in val or "forward" in val:
                     result.setdefault(field, {})[

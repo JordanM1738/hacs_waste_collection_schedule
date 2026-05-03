@@ -671,3 +671,72 @@ class TestHolidayHandling:
         # ORDURES (IMPACTGARB=None): stays Dec 25
         assert date(
             2025, 12, 25) in ordures_dates, "ORDURES must stay on Dec 25"
+
+    def test_dynamic_impact_field_detection(self):
+        """Unknown IMPACT* fields (e.g. IMPACTYARD) must be detected automatically.
+
+        This covers the out_fields='*' + dynamic k.startswith('IMPACT') change.
+        If a new collection type adds a new IMPACT field, it must be picked up
+        without any code change.
+        """
+        import unittest.mock as mock
+
+        christmas_ms = 1766620800000  # Dec 25 2025
+
+        with mock.patch(
+            "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.query_feature_layer",
+            return_value=[{
+                "HOLIDAYDATE": christmas_ms,
+                "IMPACTYARD": "OneDayFrwd",   # new field, not in old hardcoded list
+                "IMPACTPAPE": "OneDayBack",   # another new field
+                "IMPACTRECY": "None",
+                "IMPACTGARB": "None",
+            }],
+        ):
+            result = shawinigan_ca._get_holidays_by_field()
+
+        dec25 = date(2025, 12, 25)
+        assert "IMPACTYARD" in result, "Dynamic IMPACTYARD must be detected"
+        assert result["IMPACTYARD"][dec25] == date(2025, 12, 26)
+        assert "IMPACTPAPE" in result, "Dynamic IMPACTPAPE must be detected"
+        assert result["IMPACTPAPE"][dec25] == date(2025, 12, 24)
+        assert "IMPACTRECY" not in result, "IMPACTRECY=None must not appear"
+        assert "IMPACTGARB" not in result, "IMPACTGARB=None must not appear"
+
+    def test_collection_layers_queried_with_wildcard_outfields(self):
+        """query_feature_layer for collection layers must use out_fields='*'.
+
+        This ensures all fields (including future ones) are always fetched.
+        """
+        import unittest.mock as mock
+
+        calls = []
+
+        def query_side_effect(url, **kwargs):
+            calls.append((url, kwargs))
+            if "/1" in url:
+                today = date.today()
+                return [{"SCHEDULE": str(today + timedelta(days=10)),
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": "IMPACTGARB"}]
+            return []
+
+        with (
+            mock.patch(
+                "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.geocode",
+                return_value={"x": -8096727.38, "y": 5865698.33},
+            ),
+            mock.patch(
+                "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.query_feature_layer",
+                side_effect=query_side_effect,
+            ),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            source.fetch()
+
+        collection_calls = [(url, kw) for url, kw in calls if "/6" not in url]
+        for url, kw in collection_calls:
+            assert kw.get("out_fields") == "*", (
+                f"Layer {url} must use out_fields='*', got {kw.get('out_fields')!r}"
+            )
