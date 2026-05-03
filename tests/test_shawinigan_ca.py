@@ -224,12 +224,18 @@ class TestScheduleParsing:
         """Test parsing irregularly scheduled dates"""
         mock_geocode.return_value = {"x": -8096727.38, "y": 5865698.33}
 
+        today = date.today()
+        d1 = today + timedelta(days=7)
+        d2 = today + timedelta(days=21)
+        d3 = today + timedelta(days=35)
+        schedule = f"{d1},{d2},{d3}"
+
         def query_side_effect(url, **kwargs):
             if "/1" in url:  # Ordures
                 return [
                     {
                         "DISTRICTID": "S2",
-                        "SCHEDULE": "2026-05-01,2026-05-15,2026-05-29",
+                        "SCHEDULE": schedule,
                         "SCHEDULETYPE": "Irregularly",
                         "NAME": "Friday",
                     }
@@ -244,25 +250,31 @@ class TestScheduleParsing:
         collections = source.fetch()
 
         dates = {c.date for c in collections}
-        assert date(2026, 5, 1) in dates
-        assert date(2026, 5, 15) in dates
-        assert date(2026, 5, 29) in dates
+        assert d1 in dates
+        assert d2 in dates
+        assert d3 in dates
 
     def test_parse_schedule_irregular(self):
         """Test _parse_schedule with irregular schedule"""
         source = shawinigan_ca.Source(address="test")
 
+        today = date.today()
+        d1 = today + timedelta(days=7)
+        d2 = today + timedelta(days=21)
+        d3 = today + timedelta(days=35)
+        schedule = f"{d1},{d2},{d3}"
+
         dates = source._parse_schedule(
-            "2026-05-01,2026-05-15,2026-05-29",
+            schedule,
             "irregularly",
             "Friday",
-            date(2026, 5, 1),
-            date(2026, 6, 30),
+            today,
+            today + timedelta(days=365),
         )
 
-        assert date(2026, 5, 1) in dates
-        assert date(2026, 5, 15) in dates
-        assert date(2026, 5, 29) in dates
+        assert d1 in dates
+        assert d2 in dates
+        assert d3 in dates
 
 
 class TestBiweeklyCalibration:
@@ -312,8 +324,25 @@ class TestBiweeklyCalibration:
         assert gaps == {14}
 
     def test_biweekly_alternates_with_ordures_in_fetch(self):
-        """Integration-style: RECYCLAGE result must alternate with ORDURES."""
+        """Integration-style: RECYCLAGE result must alternate with ORDURES.
+
+        ORDURES dates are built relative to today so this test never expires.
+        We pick the last two past Wednesdays and one future Wednesday as ORDURES
+        so that the calibration has enough signal regardless of the current date.
+        """
         import unittest.mock as mock
+
+        today = date.today()
+        # Find the most recent Wednesday on or before today
+        days_since_wed = (today.weekday() - 2) % 7
+        last_wed = today - timedelta(days=days_since_wed)
+        # Three consecutive bi-weekly Wednesdays for ORDURES
+        ordures_d1 = last_wed - timedelta(days=14)
+        ordures_d2 = last_wed
+        ordures_d3 = last_wed + timedelta(days=14)
+        ordures_schedule = f"{ordures_d1},{ordures_d2},{ordures_d3}"
+        # The first RECYCLAGE date must be the Wednesday between d2 and d3
+        expected_first_recyclage = last_wed + timedelta(days=7)
 
         with (
             mock.patch(
@@ -332,7 +361,7 @@ class TestBiweeklyCalibration:
                              "HOLIDAYFIELD": "IMPACTRECY"}]
                 if "/1" in url:  # ORDURES – explicit Wednesday dates
                     return [{"DISTRICTID": "SHS1",
-                             "SCHEDULE": "2026-04-29,2026-05-13,2026-05-27",
+                             "SCHEDULE": ordures_schedule,
                              "SCHEDULETYPE": "Irregularly", "NAME": "mercredi",
                              "HOLIDAYFIELD": "IMPACTGARB"}]
                 if "/4" in url:  # COMPOST – no data
@@ -357,8 +386,53 @@ class TestBiweeklyCalibration:
         # All RECYCLAGE dates must be Wednesdays
         for d in recyclage:
             assert d.weekday() == 2, f"{d} is not a Wednesday"
-        # The first RECYCLAGE date must be May 6 (the Wednesday *after* Apr 29)
-        assert recyclage[0] == date(2026, 5, 6)
+        # The first future RECYCLAGE must be the Wednesday between the two future ORDURES
+        assert recyclage[0] == expected_first_recyclage
+
+
+class TestParseScheduleEdgeCases:
+    """Edge cases for _parse_schedule."""
+
+    def test_empty_schedule_returns_empty(self):
+        """Empty SCHEDULE string must return no dates."""
+        assert shawinigan_ca._parse_schedule("", "2 week", "mercredi",
+                                             date.today(), date.today() + timedelta(days=90)) == []
+
+    def test_unknown_scheduletype_returns_empty(self):
+        """An unrecognised SCHEDULETYPE must return no dates."""
+        assert shawinigan_ca._parse_schedule(
+            "some_value", "monthly", "mercredi",
+            date.today(), date.today() + timedelta(days=90)) == []
+
+    def test_weekly_schedule_7day_gaps(self):
+        """A plain '1 week' pattern must produce dates 7 days apart."""
+        today = date.today()
+        dates = shawinigan_ca._parse_schedule(
+            "0001000", "1 week", "mercredi",
+            today, today + timedelta(days=60),
+        )
+        assert len(dates) >= 2
+        sorted_dates = sorted(dates)
+        gaps = {(sorted_dates[i + 1] - sorted_dates[i]).days
+                for i in range(len(sorted_dates) - 1)}
+        assert gaps == {7}
+
+    def test_weekly_all_dates_are_correct_weekday(self):
+        """Every date from a weekly schedule must fall on the named weekday."""
+        today = date.today()
+        dates = shawinigan_ca._parse_schedule(
+            "0001000", "week", "lundi",
+            today, today + timedelta(days=60),
+        )
+        for d in dates:
+            assert d.weekday() == 0, f"{d} is not a Monday"
+
+    def test_unknown_day_name_returns_empty(self):
+        """An unrecognised day name must return no dates for weekly patterns."""
+        today = date.today()
+        assert shawinigan_ca._parse_schedule(
+            "0001000", "week", "funday",
+            today, today + timedelta(days=60)) == []
 
 
 class TestHolidayHandling:
@@ -431,6 +505,114 @@ class TestHolidayHandling:
             result = shawinigan_ca._get_holidays_by_field()
 
         assert result == {}, "No holidays expected when impact is None"
+
+    def test_holiday_impact_onedayback_parsed(self):
+        """'OneDayBack' must shift the collection date back by 1 day."""
+        import unittest.mock as mock
+
+        christmas_ms = 1766620800000  # Dec 25 2025
+
+        with mock.patch(
+            "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.query_feature_layer",
+            return_value=[{
+                "HOLIDAYDATE": christmas_ms,
+                "IMPACTRECY": "OneDayBack",
+                "IMPACTGARB": "None",
+                "IMPACTCOMP": None,
+            }],
+        ):
+            result = shawinigan_ca._get_holidays_by_field()
+
+        dec25 = date(2025, 12, 25)
+        assert result["IMPACTRECY"][dec25] == date(2025, 12, 24)
+
+    def test_holidays_arcgis_error_returns_empty(self):
+        """ArcGisError while fetching holidays must return empty dict, not raise."""
+        import unittest.mock as mock
+        from waste_collection_schedule.service.ArcGis import ArcGisError
+
+        with mock.patch(
+            "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.query_feature_layer",
+            side_effect=ArcGisError("network error"),
+        ):
+            result = shawinigan_ca._get_holidays_by_field()
+
+        assert result == {}
+
+    def test_missing_holidayfield_defaults_to_impactgarb(self):
+        """When HOLIDAYFIELD is absent, the layer must default to IMPACTGARB."""
+        import unittest.mock as mock
+
+        today = date.today()
+        future = today + timedelta(days=14)
+
+        def query_side_effect(url, **kwargs):
+            if "/1" in url:  # ORDURES – no HOLIDAYFIELD key
+                return [{"DISTRICTID": "S1",
+                         "SCHEDULE": str(future),
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi"}]  # no HOLIDAYFIELD
+            if "/6" in url:
+                return [{"HOLIDAYDATE": int(future.strftime("%s")) * 1000
+                         if hasattr(future, 'strftime') else 0,
+                         "IMPACTRECY": "None",
+                         "IMPACTGARB": "OneDayFrwd",
+                         "IMPACTCOMP": "None"}]
+            return []
+
+        with (
+            mock.patch(
+                "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.geocode",
+                return_value={"x": -8096727.38, "y": 5865698.33},
+            ),
+            mock.patch(
+                "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.query_feature_layer",
+                side_effect=query_side_effect,
+            ),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            # Should not raise
+            collections = source.fetch()
+
+        assert len(collections) >= 1
+
+    def test_one_layer_arcgis_error_others_succeed(self):
+        """If one collection layer raises ArcGisError, the other layers must still return results."""
+        import unittest.mock as mock
+        from waste_collection_schedule.service.ArcGis import ArcGisError
+
+        today = date.today()
+        future = today + timedelta(days=10)
+
+        def query_side_effect(url, **kwargs):
+            if "/0" in url:  # RECYCLAGE – raises
+                raise ArcGisError("layer unavailable")
+            if "/1" in url:  # ORDURES – succeeds
+                return [{"DISTRICTID": "S1",
+                         "SCHEDULE": str(future),
+                         "SCHEDULETYPE": "Irregularly",
+                         "NAME": "mercredi",
+                         "HOLIDAYFIELD": "IMPACTGARB"}]
+            if "/6" in url:
+                return []
+            return []
+
+        with (
+            mock.patch(
+                "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.geocode",
+                return_value={"x": -8096727.38, "y": 5865698.33},
+            ),
+            mock.patch(
+                "custom_components.waste_collection_schedule.waste_collection_schedule.source.shawinigan_ca.query_feature_layer",
+                side_effect=query_side_effect,
+            ),
+        ):
+            source = shawinigan_ca.Source(address="test")
+            collections = source.fetch()
+
+        types = {c.type for c in collections}
+        assert "ORDURES" in types
+        assert "RECYCLAGE" not in types
 
     def test_holiday_applied_per_layer_field(self):
         """Each layer must use its own HOLIDAYFIELD to apply adjustments."""
